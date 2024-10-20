@@ -4,10 +4,9 @@ from enum import Enum
 class FileExtension(str, Enum):
     CSV = "csv"
     TXT = "txt"
-    EXCEL = "xlsx"
 
 
-class Separator(str, Enum):
+class Delimiter(str, Enum):
     COMMA = ","
     TAB = "\t"
     PIPE = "|"

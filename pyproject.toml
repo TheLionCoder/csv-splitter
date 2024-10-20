@@ -9,5 +9,6 @@ dependencies = [
   "polars>=1.9.0",
   "pytest>=8.3.3",
   "tqdm>=4.66.5",
+  "typer>=0.12.5",
   "xlsxwriter>=3.2.0",
 ]
