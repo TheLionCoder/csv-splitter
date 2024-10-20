@@ -1,12 +1,13 @@
 [project]
-name = "file-splitter"
+name = "csv-splitter"
 version = "0.1.0"
 description = "A tool designed to split a large dataset into multiple smaller files based on a specified column value"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "loguru>=0.7.2",
-    "polars>=1.9.0",
-    "pytest>=8.3.3",
-    "tqdm>=4.66.5",
+  "loguru>=0.7.2",
+  "polars>=1.9.0",
+  "pytest>=8.3.3",
+  "tqdm>=4.66.5",
+  "xlsxwriter>=3.2.0",
 ]

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/file-splitter.iml" filepath="$PROJECT_DIR$/.idea/file-splitter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/csv-splitter.iml" filepath="$PROJECT_DIR$/.idea/csv-splitter.iml" />
     </modules>
   </component>
 </project>

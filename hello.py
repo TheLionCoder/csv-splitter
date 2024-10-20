@@ -1,5 +1,5 @@
 def main():
-    print("Hello from file-splitter!")
+    print("Hello from csv-splitter!")
 
 
 if __name__ == "__main__":

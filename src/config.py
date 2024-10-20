@@ -4,7 +4,6 @@ from enum import Enum
 class FileExtension(str, Enum):
     CSV = "csv"
     TXT = "txt"
-    PARQUET = "parquet"
     EXCEL = "xlsx"
 
 

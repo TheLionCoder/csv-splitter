@@ -8,7 +8,7 @@ from loguru import logger
 
 from src.file_reading import load_data
 from src.file_pipeline import extract_unique_categories
-from src.file_writing import make_subdir, save_file
+from src.file_writing import make_subdir
 
 
 def write_file(

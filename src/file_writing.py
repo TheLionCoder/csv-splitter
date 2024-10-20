@@ -2,43 +2,62 @@
 from pathlib import Path
 
 import polars as pl
+from xlsxwriter import Workbook
 
 from src.config import FileExtension
 
 
- def prepare_and_store_file(dataframe: pl.DataFrame,*,
-                            category_value: str,
-                            dir_path: Path,
-                            file_extension: str,
-                            separator: str,
-                            make_dir: bool) -> None:
-     """
-     Prepare and store the file
-     :param dataframe: Dataframe to store
-     :param category_value: Category value to store
-     :param dir_path: Path to store the file
-     :param file_extension:  extension to store
-     :param separator: Separator to store the file. If not, plain text [csv, txt] is ignored.
-     :param make_dir: Whether to create a directory
-     """
-     ...
-
-
-
-def save_file(dataframe: pl.DataFrame, *, file_path: Path, file_extension: str,
-              separator: str) -> None:
+def prepare_and_store_file(
+    query: pl.LazyFrame,
+    *,
+    category_value: str,
+    dir_path: Path,
+    file_name: str,
+    file_extension: str,
+    separator: str,
+    make_dir: bool,
+) -> None:
     """
-    Save the file
+    Prepare and store the file
+    :param query: LazyFrame to store
+    :param category_value: Category value to store
+    :param dir_path: Path to store the file
+    :param file_name: Name of the file
+    :param file_extension:  extension to store
+    :param separator: Separator to store the file. If not, plain text [csv, txt] is ignored.
+    :param make_dir: Whether to create a directory
     """
-    match file_extension:
-        case FileExtension.CSV | FileExtension.TXT:
-            dataframe.write_csv(file_path, separator=separator)
-        case FileExtension.PARQUET:
-            dataframe.write_parquet(file_path)
-        case FileExtension.EXCEL:
-            dataframe.write_excel(file_path, worksheet="table")
-        case _:
-            raise ValueError(f"Unsupported file extension: {file_extension}")
+
+    file_name = f"{file_name}.{file_extension}"
+    if make_dir:
+        make_subdir(dir_path, category_value)
+        file_path: Path = dir_path.joinpath(category_value, file_name)
+    else:
+        file_path: Path = dir_path.joinpath(file_name).with_stem(category_value)
+
+    if file_extension == FileExtension.CSV.value or file_extension:
+        save_file_as_csv(query, file_path=file_path, separator=separator)
+    elif file_extension == FileExtension.EXCEL.value:
+        save_file_as_xlsx(query, file_path=file_path)
+    else:
+        raise ValueError(f"Invalid file extension: {file_extension}")
+
+
+
+def save_file_as_csv(query: pl.LazyFrame, *, file_path: Path, separator: str) -> None:
+    """
+    Save the file as csv
+    """
+    query.sink_csv(file_path, separator=separator)
+
+
+def save_file_as_xlsx(query: pl.LazyFrame, file_path: Path) -> None:
+    """
+    Save the file as xlsx
+    """
+    df: pl.DataFrame = query.collect()
+    with Workbook(file_path) as wb:
+        df.write_excel(wb, worksheet="table", autofit=True)
 
 
 def make_subdir(dir_path: Path, dir_name: str) -> None:
@@ -46,5 +65,3 @@ def make_subdir(dir_path: Path, dir_name: str) -> None:
     Create the directory.
     """
     dir_path.joinpath(dir_name).mkdir(parents=True, exist_ok=True)
-
-
