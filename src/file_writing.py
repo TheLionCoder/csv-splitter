@@ -7,6 +7,7 @@ from xlsxwriter import Workbook
 
 def prepare_and_store_file(
     query: pl.LazyFrame,
+    input_column: str, 
     category_value: str,
     dir_path: Path,
     file_name: str,
@@ -17,6 +18,8 @@ def prepare_and_store_file(
     """
     Prepare and store the file
     :param query: LazyFrame to store
+    :param input_column: Column to extract unique categories from
+    :param input_column: Column to extract unique categories from
     :param category_value: Category value to store
     :param dir_path: Path to store the file
     :param file_name: Name of the file
@@ -24,6 +27,8 @@ def prepare_and_store_file(
     :param delimiter: Separator to store the file. If not, plain text [csv, txt] is ignored.
     :param make_dir: Whether to create a directory
     """
+    query: pl.LazyFrame = (query.filter(pl.col(input_column).eq(pl.lit(category_value)))
+                           .select(pl.all().exclude([input_column])))
     file_name = f"{file_name}.{file_extension}"
     if make_dir:
         make_subdir(dir_path, category_value)

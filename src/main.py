@@ -66,14 +66,14 @@ def main(
     output_format: Annotated[
         FileExtension,
         typer.Option("--output-format", "--file-format", "-f", case_sensitive=False),
-    ] = FileExtension.CSV.value,
+    ] = FileExtension.CSV,
     delimiter: Annotated[
         Delimiter,
         typer.Option(
             "--delimiter", "-d", case_sensitive=False,
             help="Separator for input files [',', '|', '\\t']"
         ),
-    ] = Delimiter.COMMA.value,
+    ] = Delimiter.COMMA,
 ) -> None:
     """Main function to pipeline the file"""
     if path.is_file() and is_valid(path):
@@ -81,9 +81,9 @@ def main(
             logger.opt(colors=True).info(f"Processing file: {path}")
             process_pipeline(
                 path,
-                delimiter=delimiter,
+                delimiter=delimiter.value,
                 input_column=input_column,
-                output_format=output_format,
+                output_format=output_format.value,
                 output_dir=output_dir,
                 make_dir=make_dir,
                 keep_delimiter=keep_delimiter,
@@ -99,9 +99,9 @@ def main(
                     logger.opt(colors=True).info(f"Processing file: {file_path}")
                     process_pipeline(
                         file_path,
-                        delimiter=delimiter,
+                        delimiter=delimiter.value,
                         input_column=input_column,
-                        output_format=output_format,
+                        output_format=output_format.value,
                         output_dir=output_dir,
                         make_dir=make_dir,
                         keep_delimiter=keep_delimiter,
@@ -175,12 +175,12 @@ def write_file(
     categories_list: List[str] = extract_unique_categories(
         query, input_col=input_column
     )
-    query: pl.LazyFrame = query.select(pl.all().exclude([input_column]))
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = [
             executor.submit(
                 prepare_and_store_file,
                 query,
+                input_column,
                 category_value,
                 output_dir,
                 file_name,
