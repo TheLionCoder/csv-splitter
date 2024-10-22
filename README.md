@@ -24,7 +24,7 @@ uv sync
 
 ## Usage
 
-To run the program, use the following commandi
+To run the program, use the following command
 
 _Get Help_:
 
@@ -41,10 +41,11 @@ uv run python src/main.y --help
 ### _Arguments_
 
 - `input column Column to extract unique categories from`
-- `--path -p Path to the file or directory`
+- `--path -p Path to the file`
 - `--output dir -o Output directory to save the files`
 - `--make-dir -m Whether tto create directories to save each category`
-- `--keep-delimiter, --keep-delim -k Whether keep the input file delimiter in the output.`
+- `--keep-delimiter, --keep-delim -k Whether keep the input file delimiterin
+in the output.`
 - `--output-format, --file-format -f either csv or txt`
 - `delimiter -d Separator for input files [',', '|'', '\\t']`
 
@@ -54,5 +55,5 @@ To split a csv file comma separated on my root project
 
 ```sh
 uv run python "State" --path ./assets/city.csv -o ./assets/data/ -m
---keep-delim --output-format txt`
+--keep-delim --output-format txt
 ```

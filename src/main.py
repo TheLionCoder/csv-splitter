@@ -30,7 +30,9 @@ app = typer.Typer()
 
 @app.command()
 def main(
-    input_column: Annotated[str, typer.Argument(help="Column to extract unique categories from")],
+    input_column: Annotated[
+        str, typer.Argument(help="Column to extract unique categories from")
+    ],
     path: Annotated[
         Path,
         typer.Option(
@@ -38,10 +40,10 @@ def main(
             "-p",
             exists=True,
             file_okay=True,
-            dir_okay=True,
+            dir_okay=False,
             writable=False,
             resolve_path=True,
-            help="Path to the file or directory"
+            help="File path to process",
         ),
     ],
     output_dir: Annotated[
@@ -54,15 +56,29 @@ def main(
             dir_okay=True,
             writable=True,
             resolve_path=True,
-            help="Output directory to save the files"
+            help="Output directory to save the files",
         ),
     ],
-    make_dir: Annotated[bool, typer.Option("--make-dir", "-m", is_flag=True,
-                                           help="Whether to create directories to save each category")] = False,
-    keep_delimiter: Annotated[bool, typer.Option("--keep-delimiter", "--keep-delim", "-k",
-                                                 is_flag=True,
-                                                 help="Whether keep the input file delimiter in the output. "
-                                                      "Default output Delimiter is '|'")] = False,
+    make_dir: Annotated[
+        bool,
+        typer.Option(
+            "--make-dir",
+            "-m",
+            is_flag=True,
+            help="Whether to create directories to save each category",
+        ),
+    ] = False,
+    keep_delimiter: Annotated[
+        bool,
+        typer.Option(
+            "--keep-delimiter",
+            "--keep-delim",
+            "-k",
+            is_flag=True,
+            help="Whether keep the input file delimiter in the output. "
+            "Default output Delimiter is '|'",
+        ),
+    ] = False,
     output_format: Annotated[
         FileExtension,
         typer.Option("--output-format", "--file-format", "-f", case_sensitive=False),
@@ -70,13 +86,15 @@ def main(
     delimiter: Annotated[
         Delimiter,
         typer.Option(
-            "--delimiter", "-d", case_sensitive=False,
-            help="Separator for input files [',', '|', '\\t']"
+            "--delimiter",
+            "-d",
+            case_sensitive=False,
+            help="Separator for input files [',', '|', '\\t']",
         ),
     ] = Delimiter.COMMA,
 ) -> None:
     """Main function to pipeline the file"""
-    if path.is_file() and is_valid(path):
+    if is_valid(path):
         try:
             logger.opt(colors=True).info(f"Processing file: {path}")
             process_pipeline(
@@ -90,24 +108,6 @@ def main(
             )
         except FileNotFoundError as e:
             logger.error(f"File not found: {e}")
-    else:
-        for file_path in tqdm(
-            path.glob("*"), desc="Processing files..", colour="yellow"
-        ):
-            if file_path.is_file() and is_valid(file_path):
-                try:
-                    logger.opt(colors=True).info(f"Processing file: {file_path}")
-                    process_pipeline(
-                        file_path,
-                        delimiter=delimiter.value,
-                        input_column=input_column,
-                        output_format=output_format.value,
-                        output_dir=output_dir,
-                        make_dir=make_dir,
-                        keep_delimiter=keep_delimiter,
-                    )
-                except FileNotFoundError as e:
-                    logger.error(f"File not found {e}")
 
 
 def is_valid(file_path: Path) -> bool:
