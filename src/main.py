@@ -59,11 +59,11 @@ def main(
             help="Output directory to save the files",
         ),
     ],
-    make_dir: Annotated[
+    create_dir: Annotated[
         bool,
         typer.Option(
-            "--make-dir",
-            "-m",
+            "--create-dir",
+            "-c",
             is_flag=True,
             help="Whether to create directories to save each category",
         ),
@@ -103,7 +103,7 @@ def main(
                 input_column=input_column,
                 output_format=output_format.value,
                 output_dir=output_dir,
-                make_dir=make_dir,
+                create_dir=create_dir,
                 keep_delimiter=keep_delimiter,
             )
         except FileNotFoundError as e:
@@ -123,7 +123,7 @@ def process_pipeline(
     input_column: str,
     output_format: str,
     output_dir: Path,
-    make_dir: bool,
+    create_dir: bool,
     keep_delimiter: bool,
 ) -> None:
     """Process the pipeline"""
@@ -147,7 +147,7 @@ def process_pipeline(
         delimiter=output_delimiter,
         file_name=file_name,
         output_dir=output_dir,
-        make_dir=make_dir,
+        create_dir=create_dir,
     )
 
 
@@ -159,7 +159,7 @@ def write_file(
     delimiter: str,
     file_name: str,
     output_dir: Path,
-    make_dir: bool,
+    create_dir: bool,
 ) -> None:
     """
     Write the file to the output directory
@@ -170,7 +170,7 @@ def write_file(
     Default is "|"
     :param file_name: the Name of the file
     :param output_dir: Directory to save the file
-    :param make_dir: Whether to create a directory
+    :param create_dir: Whether to create a directory
     """
     categories_list: List[str] = extract_unique_categories(
         query, input_col=input_column
@@ -186,7 +186,7 @@ def write_file(
                 file_name,
                 output_format,
                 delimiter,
-                make_dir,
+                create_dir,
             )
             for category_value in categories_list
         ]

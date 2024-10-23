@@ -12,7 +12,7 @@ def prepare_and_store_file(
     file_name: str,
     file_extension: str,
     delimiter: str,
-    make_dir: bool,
+    create_dir: bool,
 ) -> None:
     """
     Prepare and store the file
@@ -24,13 +24,13 @@ def prepare_and_store_file(
     :param file_name: Name of the file
     :param file_extension:  extension to store
     :param delimiter: Separator to store the file. If not, plain text [csv, txt] is ignored.
-    :param make_dir: Whether to create a directory
+    :param create_dir: Whether to create a directory
     """
     query: pl.LazyFrame = query.filter(
         pl.col(input_column).eq(pl.lit(category_value))
     ).select(pl.all().exclude([input_column]))
     file_name = f"{file_name}.{file_extension}"
-    if make_dir:
+    if create_dir:
         make_subdir(dir_path, category_value)
         file_path: Path = dir_path.joinpath(category_value, file_name)
     else:
