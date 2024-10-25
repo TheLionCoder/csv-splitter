@@ -3,6 +3,8 @@ from pathlib import Path
 
 import polars as pl
 
+from src.config import Delimiter
+
 
 def prepare_and_store_file(
     query: pl.LazyFrame,
@@ -11,7 +13,6 @@ def prepare_and_store_file(
     dir_path: Path,
     file_name: str,
     file_extension: str,
-    delimiter: str,
     create_dir: bool,
 ) -> None:
     """
@@ -23,7 +24,6 @@ def prepare_and_store_file(
     :param dir_path: Path to store the file
     :param file_name: Name of the file
     :param file_extension:  extension to store
-    :param delimiter: Separator to store the file. If not, plain text [csv, txt] is ignored.
     :param create_dir: Whether to create a directory
     """
     query: pl.LazyFrame = query.filter(
@@ -36,7 +36,7 @@ def prepare_and_store_file(
     else:
         file_path: Path = dir_path.joinpath(file_name).with_stem(category_value)
 
-    save_file_as_csv(query, file_path=file_path, separator=delimiter)
+    save_file_as_csv(query, file_path=file_path, separator=Delimiter.PIPE.value)
 
 
 def save_file_as_csv(query: pl.LazyFrame, *, file_path: Path, separator: str) -> None:

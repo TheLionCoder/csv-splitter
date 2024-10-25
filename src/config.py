@@ -10,3 +10,4 @@ class Delimiter(str, Enum):
     COMMA = ","
     TAB = "\t"
     PIPE = "|"
+    SEMICOLON = ";"

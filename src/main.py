@@ -68,17 +68,6 @@ def main(
             help="Whether to create directories to save each category",
         ),
     ] = False,
-    keep_delimiter: Annotated[
-        bool,
-        typer.Option(
-            "--keep-delimiter",
-            "--keep-delim",
-            "-k",
-            is_flag=True,
-            help="Whether keep the input file delimiter in the output. "
-            "Default output Delimiter is '|'",
-        ),
-    ] = False,
     output_format: Annotated[
         FileExtension,
         typer.Option("--output-format", "--file-format", "-f", case_sensitive=False),
@@ -104,7 +93,6 @@ def main(
                 output_format=output_format.value,
                 output_dir=output_dir,
                 create_dir=create_dir,
-                keep_delimiter=keep_delimiter,
             )
         except FileNotFoundError as e:
             logger.error(f"File not found: {e}")
@@ -124,11 +112,9 @@ def process_pipeline(
     output_format: str,
     output_dir: Path,
     create_dir: bool,
-    keep_delimiter: bool,
 ) -> None:
     """Process the pipeline"""
     file_name: str = input_path.stem
-    output_delimiter: str = delimiter if keep_delimiter else Delimiter.PIPE.value
 
     query: pl.LazyFrame = load_data(input_path, delimiter)
     if not has_column(query, input_column):
@@ -144,7 +130,6 @@ def process_pipeline(
         query,
         input_column=input_column,
         output_format=output_format,
-        delimiter=output_delimiter,
         file_name=file_name,
         output_dir=output_dir,
         create_dir=create_dir,
@@ -156,7 +141,6 @@ def write_file(
     *,
     input_column: str,
     output_format: str,
-    delimiter: str,
     file_name: str,
     output_dir: Path,
     create_dir: bool,
@@ -166,8 +150,6 @@ def write_file(
     :param query: Polars LazyFrame
     :param input_column: Column to extract unique categories from
     :param output_format: File format to save
-    :param delimiter: Separator to save the file.
-    Default is "|"
     :param file_name: the Name of the file
     :param output_dir: Directory to save the file
     :param create_dir: Whether to create a directory
@@ -185,7 +167,6 @@ def write_file(
                 output_dir,
                 file_name,
                 output_format,
-                delimiter,
                 create_dir,
             )
             for category_value in categories_list

@@ -43,5 +43,5 @@ def fill_null_value(query: pl.LazyFrame, input_column: str) -> pl.LazyFrame:
     :param input_column: Column to fill null values
     :return pl.LazyFrame
     """
-    value: pl.Expr = pl.lit(f"{input_column}_null")
+    value: pl.Expr = pl.lit("unknown")
     return query.with_columns([pl.col(input_column).fill_null(value)])
