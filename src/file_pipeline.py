@@ -32,8 +32,7 @@ def has_null_value(query: pl.LazyFrame, input_column: str) -> bool:
     :param input_column: Column to check
     :return: Boolean value
     """
-    count: int = query.select(pl.col(input_column).null_count()).collect().item()
-    return count > 0
+    return query.select([pl.col(input_column).has_nulls()]).collect().item()
 
 
 def fill_null_value(query: pl.LazyFrame, input_column: str) -> pl.LazyFrame:

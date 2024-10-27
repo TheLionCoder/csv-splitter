@@ -59,5 +59,5 @@ def test_fill_null_value():
     query: pl.LazyFrame = make_dataframe()
     df: pl.DataFrame = fill_null_value(query, "spam").collect()
     assert_series_equal(
-        pl.Series("spam", ["a", "b", "spam_null", "spam_null"]), df.get_column("spam")
+        pl.Series("spam", ["a", "b", "unknown", "unknown"]), df.get_column("spam")
     )
