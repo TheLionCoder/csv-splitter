@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
+from typing import Optional
 
 import polars as pl
 
@@ -29,12 +30,11 @@ def prepare_and_store_file(
     query: pl.LazyFrame = query.filter(
         pl.col(input_column).eq(pl.lit(category_value))
     ).select(pl.all().exclude([input_column]))
+
     file_name = f"{file_name}.{file_extension}"
-    if create_dir:
-        make_subdir(dir_path, category_value)
-        file_path: Path = dir_path.joinpath(category_value, file_name)
-    else:
-        file_path: Path = dir_path.joinpath(file_name).with_stem(category_value)
+    file_path: Optional[Path] = create_category_path(
+        dir_path, category_value, create_dir, file_name
+    )
 
     save_file_as_csv(query, file_path=file_path, separator=Delimiter.PIPE.value)
 
@@ -46,8 +46,21 @@ def save_file_as_csv(query: pl.LazyFrame, *, file_path: Path, separator: str) ->
     query.sink_csv(file_path, separator=separator)
 
 
-def make_subdir(dir_path: Path, dir_name: str) -> None:
+def create_category_path(
+    dir_path: Path, category_value: str, create_dir: bool, file_name: str
+) -> Optional[Path]:
     """
-    Create the directory.
+    Create a category path
     """
-    dir_path.joinpath(dir_name).mkdir(parents=True, exist_ok=True)
+    if category_value in ["..", "/", "\\"]:
+        return None
+
+    category_dir: Path = dir_path.joinpath(category_value)
+
+    if create_dir and not category_dir.exists():
+        category_dir.mkdir(parents=True, exist_ok=True)
+        file_path: Path = category_dir.joinpath(category_value, file_name)
+    else:
+        file_path: Path = dir_path.joinpath(file_name).with_stem(category_value)
+
+    return file_path
