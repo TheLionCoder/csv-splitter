@@ -4,7 +4,7 @@ from typing import Optional
 
 import polars as pl
 
-from src.config import Delimiter
+from src.config import Delimiter, FileExtension
 
 
 def prepare_and_store_file(
@@ -13,13 +13,12 @@ def prepare_and_store_file(
     category_value: str,
     dir_path: Path,
     file_name: str,
-    file_extension: str,
+    file_extension: FileExtension,
     create_dir: bool,
 ) -> None:
     """
     Prepare and store the file
     :param query: LazyFrame to store
-    :param input_column: Column to extract unique categories from
     :param input_column: Column to extract unique categories from
     :param category_value: Category value to store
     :param dir_path: Path to store the file
@@ -27,23 +26,16 @@ def prepare_and_store_file(
     :param file_extension:  extension to store
     :param create_dir: Whether to create a directory
     """
-    query: pl.LazyFrame = query.filter(
+    lf: pl.LazyFrame = query.filter(
         pl.col(input_column).eq(pl.lit(category_value))
     ).select(pl.all().exclude([input_column]))
 
-    file_name = f"{file_name}.{file_extension}"
+    file_name = f"{file_name}.{file_extension.value}"
     file_path: Optional[Path] = create_category_path(
         dir_path, category_value, create_dir, file_name
     )
-
-    save_file_as_csv(query, file_path=file_path, separator=Delimiter.PIPE.value)
-
-
-def save_file_as_csv(query: pl.LazyFrame, *, file_path: Path, separator: str) -> None:
-    """
-    Save the file as csv
-    """
-    query.sink_csv(file_path, separator=separator)
+    if file_path:
+        lf.sink_csv(file_path, separator=Delimiter.PIPE.value)
 
 
 def create_category_path(

@@ -3,17 +3,14 @@ import sys
 from typing import List
 
 from polars import LazyFrame
-from polars.testing import assert_series_equal
 
 sys.path.extend([".", ".."])
 
 import polars as pl
 
+from src.file_reading import has_column
 from src.file_pipeline import (
     extract_unique_categories,
-    has_column,
-    has_null_value,
-    fill_null_value,
 )
 
 
@@ -37,27 +34,11 @@ def test_extract_categories():
 
 def test_has_column():
     query: pl.LazyFrame = make_dataframe()
-    assert has_column(query, input_column="foo")
+    schema = query.collect_schema()
+    assert has_column(schema, input_column="foo")
 
 
 def test_has_column_not_found():
     query: pl.LazyFrame = make_dataframe()
-    assert not has_column(query, "baz")
-
-
-def test_has_null_value():
-    query: pl.LazyFrame = make_dataframe()
-    assert has_null_value(query, "spam")
-
-
-def test_has_no_null_value():
-    query: pl.LazyFrame = make_dataframe()
-    assert not has_null_value(query, "bar")
-
-
-def test_fill_null_value():
-    query: pl.LazyFrame = make_dataframe()
-    df: pl.DataFrame = fill_null_value(query, "spam").collect()
-    assert_series_equal(
-        pl.Series("spam", ["a", "b", "unknown", "unknown"]), df.get_column("spam")
-    )
+    schema = query.collect_schema()
+    assert not has_column(schema, "baz")
