@@ -12,6 +12,7 @@ from src.file_reading import has_column
 from src.file_pipeline import (
     extract_unique_categories,
 )
+from src.config import FileExtension
 
 
 def make_dataframe() -> pl.LazyFrame:
@@ -42,3 +43,7 @@ def test_has_column_not_found():
     query: pl.LazyFrame = make_dataframe()
     schema = query.collect_schema()
     assert not has_column(schema, "baz")
+
+
+def test_file_extension():
+    assert FileExtension.CSV.value == "csv"

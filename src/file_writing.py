@@ -30,10 +30,11 @@ def prepare_and_store_file(
         pl.col(input_column).eq(pl.lit(category_value))
     ).select(pl.all().exclude([input_column]))
 
-    file_name = f"{file_name}.{file_extension.value}"
+    file_name = f"{file_name}.{file_extension.CSV.value}"
     file_path: Optional[Path] = create_category_path(
         dir_path, category_value, create_dir, file_name
     )
+
     if file_path:
         lf.sink_csv(file_path, separator=Delimiter.PIPE.value)
 

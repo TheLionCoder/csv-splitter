@@ -1,7 +1,12 @@
 # CSV Splitter
 
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://docs.astral.sh/uv/)
+
 This project is designed to split a large csv or txt dataset into multiple
 smaller files based on a specified column value.
+
+> [!NOTE]
+> Null values are keep it as `unknown`
 
 ## Installation
 
@@ -13,10 +18,10 @@ git clone git@github.com:TheLionCoder/csv-splitter.git
 cd csv-splitter
 ```
 
-2.Install UV\_:
-To install UV "<https://docs.astral.sh/uv/getting-started/installation/>"
+3.Sync the project's dependencies with the environment.
 
-3.Sync the project's dependencies with the environment <<if step 2 is already complete>>
+> [!WARNING]
+> Applies to UV only
 
 ```sh
 uv sync
@@ -27,12 +32,6 @@ uv sync
 To run the program, use the following command
 
 _Get Help_:
-
-```sh
-python3 src/main.py --help
-```
-
-or uv
 
 ```sh
 uv run python src/main.y --help
@@ -55,5 +54,17 @@ To split a csv file comma separated on my root project
 
 ```sh
 uv run python "State" --path ./assets/city.csv -o ./assets/data/ -m
---keep-delim --output-format txt
+--keep-delimiter --output-format txt
+```
+
+_The result will be like:_
+
+```sh
+assets/
+├── city.csv
+├── data
+│   ├── AK.csv
+│   ├── AL.csv
+│   ├── CA.csv
+│   └── NY.csv
 ```
